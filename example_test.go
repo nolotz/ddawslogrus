@@ -16,7 +16,9 @@ func TestExample(t *testing.T) {
 
 	// inject request & trace id's
 	logrus.AddHook(
-		ddawslogrus.NewHook().WithContext(rootContext),
+		ddawslogrus.NewHook().WithContextFunc(func() context.Context {
+			return rootContext
+		}),
 	)
 
 	// use common timestamp field

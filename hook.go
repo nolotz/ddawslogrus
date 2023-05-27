@@ -15,13 +15,15 @@ func NewHook() *Hook {
 	}
 }
 
+type ContextFunc func() context.Context
+
 type Hook struct {
-	ctx    context.Context
+	ctxFn  ContextFunc
 	levels []logrus.Level
 }
 
-func (h *Hook) WithContext(ctx context.Context) *Hook {
-	h.ctx = ctx
+func (h *Hook) WithContextFunc(ctxFn ContextFunc) *Hook {
+	h.ctxFn = ctxFn
 	return h
 }
 
@@ -31,7 +33,10 @@ func (h *Hook) WithLevels(levels ...logrus.Level) *Hook {
 }
 
 func (h *Hook) Fire(entry *logrus.Entry) error {
-	ctx := h.ctx
+	var ctx context.Context
+	if h.ctxFn != nil {
+		ctx = h.ctxFn()
+	}
 	if entry.Context != nil {
 		ctx = entry.Context
 	}

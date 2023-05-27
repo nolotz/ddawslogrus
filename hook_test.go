@@ -19,7 +19,9 @@ func TestHookFireLambda(t *testing.T) {
 		AwsRequestID: "1",
 	})
 
-	hook := ddawslogrus.NewHook().WithContext(ctx)
+	hook := ddawslogrus.NewHook().WithContextFunc(func() context.Context {
+		return ctx
+	})
 	entry := logrus.NewEntry(nil).WithFields(logrus.Fields{
 		"lambda": map[string]any{
 			"arn": "test",
